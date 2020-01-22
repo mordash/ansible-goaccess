@@ -1,3 +1,3 @@
 ---
-# vars file for awh-goaccess
+# vars file for ansible-goaccess
 # surcharge uniquement par extra_var
