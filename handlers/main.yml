@@ -1,0 +1,12 @@
+---
+# handlers file for ansible-goaccess
+
+#- name: goaccess-start
+#  service:
+#    name: '{{ goaccess_service_name }}'
+#    state: started
+#
+#- name: goaccess-restart
+#  service:
+#    name: '{{ goaccess_service_name }}'
+#    state: restarted

@@ -1,0 +1,12 @@
+[Unit]
+Description=GoAccess Live Log Analyzer
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/goaccess -p /etc/goaccess/service-goaccess.conf
+ExecStop=/bin/kill -9 ${MAINPID}
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target

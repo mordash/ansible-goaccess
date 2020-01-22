@@ -1,0 +1,22 @@
+---
+## version
+goaccess_version: "1.3"
+
+## default configuration
+goaccess_output: /var/www/html/goaccess.html
+goaccess_real_time_html: no
+goaccess_timeformat: '%H:%M:%S'
+goaccess_dateformat: '%d/%b/%Y'
+goaccess_logformat: '%h %^[%d:%t %^] "%r" %s %b "%R" "%u"'
+
+## service
+goaccess_daemonized: no
+
+## cron
+goaccess_cron: no
+
+## log to parse
+goaccess_logfiles: []
+
+## compress
+goaccess_uncompresscmd: bzcat

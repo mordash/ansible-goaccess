@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  become: false
+  roles:
+    - ansible-goaccess
+  vars:
+    goaccess_cron: yes
+    goaccess_uncompresscmd: zcat
+    goaccess_logformat: '- %h - %^ [%d:%t %^] "%r" %s %b "%R" "%u" %^ %D %T %^ %^ %v' # azuppdlamp
+    goaccess_logfiles:
+       - /var/log/apache2/acccess-log.*
+       - /var/log/apache2/example.log
+    goaccess_cron_minute: '*/15'
+    goaccess_cron_hour: '*'
+    goaccess_cron_user: 'root'

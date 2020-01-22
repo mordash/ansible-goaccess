@@ -1,0 +1,52 @@
+---
+# tasks file for ansible-goaccess
+
+  - name: Install | Add an Apt signing key, uses whichever key is at the URL
+    apt_key:
+      url: https://deb.goaccess.io/gnugpg.key
+      state: present
+
+  - name: Install | Add goaccess repository
+    apt_repository:
+      repo: 'deb http://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+      state: present
+      filename: 'goaccess'
+
+  - name: Install | Install goaccess
+    apt:
+      name: "{{ 'goaccess=1:' + goaccess_version|string + '*' }}"
+      state: present
+      cache_valid_time : '86400' # 1 day
+      update_cache: yes
+
+  - name: Config | Creates directory for log output
+    file:
+      path: '{{ goaccess_output | dirname }}'
+      recurse: yes
+      state: directory
+      owner: www-data
+      group: www-data
+      mode: 0755
+
+  - name: Cron | Copy personnalised configuration
+    template:
+      src: goaccess-cron.conf.j2
+      dest: /etc/goaccess/goaccess-cron.conf
+      owner: root
+      group: root
+      mode: 0644
+    when: goaccess_cron
+
+  - name: Cron | Create cron config
+    cron:
+      name: goaccess-{{ ( '*' in item|basename ) | ternary(item.split('.')[0] | basename ~ '-wilcard',  item.split('.')[0]|basename) }}
+      minute: "{{ goaccess_cron_minute | default('*/15') }}"
+      hour: "{{ goaccess_cron_hour | default('*') }}"
+      day: "{{ goaccess_cron_day | default('*') }}"
+      month: "{{ goaccess_cron_month | default('*') }}"
+      weekday: "{{ goaccess_cron_weekday | default('*') }}"
+      user: "{{ goaccess_cron_user | default('root') }}"
+      job: "{{ goaccess_uncompresscmd }} -f {{ item }} | goaccess -p /etc/goaccess/goaccess-cron.conf --no-progress -a > {{ goaccess_output | dirname ~  '/' }}{{ ( '*' in item|basename ) | ternary(item.split('.')[0] | basename ~ '-wilcard',  item.split('.')[0]|basename) }}-report.html' }}"
+      cron_file: goaccess-{{ ( '*' in item|basename ) | ternary(item.split('.')[0] | basename ~ '-wilcard',  item.split('.')[0]|basename) }}
+    with_items: '{{ goaccess_logfiles | default([]) }}'
+    when: goaccess_cron
